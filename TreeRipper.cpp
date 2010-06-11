@@ -988,7 +988,7 @@ int main(int argc,char **argv) {
 
 		for (xcoord = 0;  xcoord < scaled_cols; ++xcoord){
 			for (ycoord = 0;  ycoord < scaled_rows; ++ycoord){ 
-				if (edge_img[xcoord][ycoord]==0){
+				if (edge_img[xcoord][ycoord]==0 && dif<300){
 					xroot = xcoord;
 					yroot = ycoord;
 					cout << "root " << xcoord << " " << ycoord << endl;
