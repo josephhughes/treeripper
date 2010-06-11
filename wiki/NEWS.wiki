@@ -1,4 +1,4 @@
-#Updates and news related to TreeRipper
+#summary Updates and news related to TreeRipper
 
 = 11 June 2010 =
 
