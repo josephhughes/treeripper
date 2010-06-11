@@ -1,0 +1,15 @@
+#Updates and news related to TreeRipper
+
+= 11 June 2010 =
+
+Installing tesseract-2.04 did not work on Mac OS X Version 10.5.8, got an error relating to the libpng library:
+----------------------------------------------------------
+dyld: Library not loaded: /opt/local/lib/libpng12.0.dylib
+  Referenced from: /usr/local/bin/tesseract
+  Reason: Incompatible library version: tesseract requires version 23.0.0 or later, but libpng12.0.dylib provides version 0.1.2
+Trace/BPT trap
+----------------------------------------------------------
+
+Installed up-to-date version of zlib and libpng from source successfully but tesseract-2.04 still give the same error message when executed.
+
+Re-installed tesseract-2.01 and everything works!
