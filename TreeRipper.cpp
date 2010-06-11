@@ -1,4 +1,4 @@
-//c++ -o TRsafe TRsafe.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs`
+//c++ -o TreeRipper TreeRipper.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs`
 #include <Magick++.h>
 #include <iostream>
 #include <string>
