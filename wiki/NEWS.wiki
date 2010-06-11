@@ -12,4 +12,4 @@ Trace/BPT trap
 
 Installed up-to-date version of zlib and libpng from source successfully but tesseract-2.04 still give the same error message when executed.
 
-Re-installed tesseract-2.01 and everything works!
+Re-installed tesseract-2.01 and everything works! Crumbs
