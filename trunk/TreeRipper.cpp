@@ -8,23 +8,35 @@
 #include <time.h>
 #include <vector>
 
+#define FILENAME_SIZE 256 // maximum file name length
+
 using namespace std;
 using namespace Magick;
 int main(int argc,char **argv) {
 	if (argc<3){
-		std::cout << "Usage: mprog.exe -f <filename>" << std::endl;
+		std::cout << "Usage: mprog.exe <input filename> <output filename>" << std::endl;
 		return 1;
 	}
-	std::string parm = argv[1];
-	if (parm != "-f"){
-		std::cout << "Usage: mprog.exe -f <filename>" << std::endl;
-		return 1;
-	}
-	std::string filename=argv[2];		
+    // get options from command line
+    char fname[FILENAME_SIZE];
+    strcpy(fname,argv[1]);
+    char ofname[FILENAME_SIZE];
+    strcpy(ofname,argv[2]);
+    // check file exists
+    FILE* file=fopen(fname, "r");
+    if (file !=NULL){
+      fclose(file);
+      file=NULL;
+    }else{
+      cerr << "File \"" << fname << "\" does not exist." << endl;
+      exit(0);
+    }
+    ofstream of (ofname);
+    
 	try {
 		time_t start,end,begin;
 		time (&begin);
-        Image master(filename);// IpsPage09.jpg ImageColor.jpg LandPlant4.jpg
+        Image master(fname);// IpsPage09.jpg ImageColor.jpg LandPlant4.jpg
         Image second = master;
 		std::ofstream log("./tmp.log", std::ios::binary|std::ios::out);        
 		// get size of image
@@ -973,7 +985,7 @@ int main(int argc,char **argv) {
 		svgstr << "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << endl;
 		svgstr << "<svg width=\"100%\" height=\"100%\" version=\"1.1\"" << endl;
 		svgstr << "xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << endl;
-		svgstr << "<image xlink:href=\"" << filename << "\" width=\"" << orig_scaled_cols << "\" height=\"" << orig_scaled_rows << "\"/>";
+		svgstr << "<image xlink:href=\"" << fname << "\" width=\"" << orig_scaled_cols << "\" height=\"" << orig_scaled_rows << "\"/>";
 		int tip = 0;
 		int xroot = 0;
 		int yroot = 0;
@@ -982,6 +994,7 @@ int main(int argc,char **argv) {
 		int tip_ycoord[scaled_cols];	
 		int prevx;
 		int prevy;
+		signed int brchlength;
 		log << "Tracking line edges ..." << endl;
 	  time (&start);
 	  dif = 0;
@@ -1044,6 +1057,7 @@ int main(int argc,char **argv) {
 									--xcoord; // go left
 								}
 								cout << "gone left to " << xcoord << " " << ycoord << endl;
+								cout << "previous values " << prevx << " " << prevy ;
 								svgstr << "<line x1=\"" << prevx << "\" y1=\"" << prevy << "\""; 
 								svgstr << " x2=\"" << xcoord << "\" y2=\"" << ycoord << "\" style=\"stroke:rgb(255,0,0);stroke-width:1\"/>" << endl;
       							second.draw( DrawableLine( prevx,prevy, xcoord,ycoord ) );
@@ -1051,18 +1065,26 @@ int main(int argc,char **argv) {
 									cout << "up and left: breaking at " << xcoord << " " << ycoord << endl;
 									break;
 								}
+								brchlength=prevx-xcoord;
+								cout << " difference " << brchlength << endl; 
+								if (brchlength<0){
+								  brchlength=-brchlength;
+								}
 								
 								prevx=xcoord;
 								prevy=ycoord;
-								tree << ")";
+								tree << "):" << brchlength;
 								if (xcoord<=(xroot+1)){ //because of [xcoord-1] and xcoord>1
 									svgstr << "<line x1=\"" << prevx << "\" y1=\"" << prevy << "\""; 
 									svgstr << " x2=\"" << xcoord << "\" y2=\"" << ycoord << "\" style=\"stroke:rgb(255,0,0);stroke-width:1\"/>" << endl;
       								second.draw( DrawableLine( prevx,prevy, xcoord,ycoord ) );
-
+									brchlength=prevx-xroot;
+									if (brchlength<0){
+									  brchlength=-brchlength;
+									}
 									prevx=xcoord;
 									prevy=ycoord;
-									tree << ");" << endl; // << "end;" << endl;
+									tree << "):" << brchlength << ";" << endl; // << "end;" << endl;
 									xcoord=scaled_cols;
 									ycoord=scaled_rows;
 									break;
@@ -1083,13 +1105,20 @@ int main(int argc,char **argv) {
 							if (edge_img[xcoord-1][ycoord]==0 && xcoord<scaled_cols && ycoord<scaled_rows && xcoord>=xroot && ycoord>0){ // and left
 								// do array of tipcoordinates);
 								++tip;
-								tree << tip;
+															
+								
 								tip_xcoord[tip]=xcoord+1; //to avoid having pixels before the label for OCR in tesseract
 								tip_ycoord[tip]=ycoord;// getting the coordinates of the tips to be able to slice names off
 								while (edge_img[xcoord-1][ycoord]==0 && xcoord<scaled_cols && ycoord<scaled_rows && xcoord>=xroot && ycoord>0){
 									--xcoord; // go left
 								}
+								brchlength=prevx-xcoord;
+							    if (brchlength<0){
+							      brchlength=-brchlength;
+							    }	
+							    tree << tip << ":" << brchlength;
 								cout << "gone left to " << xcoord << " " << ycoord << endl;
+								cout << "previous values " << prevx << " " << prevy ;
 								svgstr << "<line x1=\"" << prevx << "\" y1=\"" << prevy << "\""; 
 								svgstr << " x2=\"" << xcoord << "\" y2=\"" << ycoord << "\" style=\"stroke:rgb(255,0,0);stroke-width:1\"/>" << endl;
       							second.draw( DrawableLine( prevx,prevy, xcoord,ycoord ) );
@@ -1103,10 +1132,16 @@ int main(int argc,char **argv) {
 									svgstr << "<line x1=\"" << prevx << "\" y1=\"" << prevy << "\""; 
 									svgstr << " x2=\"" << xcoord << "\" y2=\"" << ycoord << "\" style=\"stroke:rgb(255,0,0);stroke-width:1\"/>" << endl;
       								second.draw( DrawableLine( prevx,prevy, xcoord,ycoord ) );
+      								
+									brchlength=prevx-xroot;
+									cout << "difference " << brchlength << endl; 
+								    if (brchlength<0){
+								      brchlength=-brchlength;
+								    }																
 
 									prevx=xcoord;
 									prevy=ycoord;
-									tree << ");" << endl; // << "end;" << endl;
+									tree << "):" << brchlength << ";" << endl; // << "end;" << endl;
 									xcoord=scaled_cols;
 									ycoord=scaled_rows;
 									break;
@@ -1123,7 +1158,7 @@ int main(int argc,char **argv) {
 									cout << "down and right: breaking at " << xcoord << " " << ycoord << endl;
 									break;
 								}
-								prevx=xcoord;
+								prevx=xcoord;															
 								prevy=ycoord;
 								tree << ",";
 							}
@@ -1144,7 +1179,7 @@ int main(int argc,char **argv) {
 		//need to find a way to clean up the taxa labels data_label contains all the position information for the gettree.php
 		stringstream data_label;
 		data_label << tree_file;
-		
+
 		std::ofstream tree_out("tree.phy", std::ios::binary|std::ios::out);	
 		tree_out << tree_file;
 		tree_out.close();
@@ -1153,9 +1188,8 @@ int main(int argc,char **argv) {
 		//<<<<<<<<<<<<<<<<<<<<<<<<<<< croping the names <<<<<<<<<<<<<<<<<<<<<<<<<<<<//
 		//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
 		
-		
-		
-		
+		of << "#NEXUS" << endl << "Begin TREES;" << endl << "\tTranslate" << endl;
+			
 		//create a white image the size of the original master image
 		Image txt_img(Geometry (cols,rows), Color("white"));
 		float scale_up ;
@@ -1203,6 +1237,7 @@ int main(int argc,char **argv) {
 			int box_height = ((tip_ycoord[i+1]+tip_ycoord[i])/2)-((tip_ycoord[i]+tip_ycoord[i-1])/2);
 			int box_width = scaled_cols - tip_xcoord[i];
 			Image taxa_label = master;
+
 			// Crop the image to specified size (width, height, xOffset, yOffset)
 			if (i==1){
 				yOffset=1;
@@ -1220,17 +1255,11 @@ int main(int argc,char **argv) {
 			//height=height+4;
 			taxa_label.crop( Geometry(width,height, xOffset, yOffset) );
 			ostringstream file_label;
-			file_label << "label.jpg" ;//<< i << ".jpg";
-			//taxa_label.compressType(Magick::NoCompression);
+			file_label << "label.tif" ;//<< i << ".jpg";
+			taxa_label.compressType(Magick::NoCompression);
+			taxa_label.magick("TIFF");
+			taxa_label.depth(8);
 			taxa_label.write(file_label.str() );
-			//if (std::system(0)){
-				// A command processor is available.
-				//cout << "convert /Users/jhughes/userContent/label.jpg -compress none /Users/jhughes/userContent/label.tif" << endl;
-				//std::system ("convert /Users/jhughes/userContent/label.jpg -compress none /Users/jhughes/userContent/label.tif");
-				system("/opt/local/bin/convert label.jpg -compress none label.tif");
-			//}else{
-			//	std::cerr << "A command processor is not available for convert.\n";
-			//}
 			
 			//std::system ("tesseract /Users/jhughes/userContent/label.tif /Users/jhughes/userContent/label");
 			//cout << "tesseract /Users/jhughes/userContent/label.tif /Users/jhughes/userContent/label" << endl;
@@ -1249,6 +1278,11 @@ int main(int argc,char **argv) {
    				line.erase(std::remove(line.begin(), line.end(), '{'), line.end());
    				line.erase(std::remove(line.begin(), line.end(), ';'), line.end());
     			cout << line << endl;
+    			if (i<tip){
+    			  of << "\t" << i << "\t'" << line << "'," << endl;
+    			}else{
+    			  of << "\t" << i << "\t'" << line << "'" << endl << ";" << endl;
+    			}
       			//data_label << line << endl;
     			taxa_name.close();
   			}
@@ -1273,7 +1307,8 @@ int main(int argc,char **argv) {
 		std::ofstream imgtxt_out("tmp.txt", std::ios::binary|std::ios::out);
 		imgtxt_out << img_txt;
 		imgtxt_out.close();
-		
+		of << "TREE	TREERIPPER = " <<  tree_file << endl << endl << "End;" << endl;
+		of.close();
 		time (&end);
   		dif = difftime (end,begin);
 		printf ("It took %.2lf seconds since the very beginning of processing.\n", dif );
