@@ -12,6 +12,10 @@ http://www.libpng.org/pub/png/libpng.html
 http://www.zlib.net/
 
 Finally, to compile TreeRipper:
-c++ -o TreeRipper TreeRipper.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs
+cd src
+make
+
+To use TreeRipper:
+treeripper inputimage.jpg outputtree.nex
 
 On Windows, matters are made slightly easier as Windows executables exist for tesseract. 
