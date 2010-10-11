@@ -1,0 +1,17 @@
+#summary Frequently asked questions
+= I get an error "dyld: Library not loaded: /usr/local/lib/libMagick++.4.dylib" on MacOS X =
+
+The problem lies in the architecture:i386 versus x86_64 and the delegate libraries for ImageMagick need to have the right architecture.
+
+This is a problem related to the different architectures under which libMagick++ and treeripper have been compiled. You need to compile libtiff, freetype, libpng, jpeg, zlib from source. You can find most of these, here:
+http://www.imagemagick.org/download/delegates/
+Then compile ImageMagick from source on you particular OS and then recompile TreeRipper and this should solve the problem. 
+
+= I get an "image not found" error = 
+
+dyld: Library not loaded: /opt/local/lib/libfreetype.6.dylib 
+Referenced from: /Volumes/Data/TreeRipper1_1/src/./treeripper
+Reason: image not found
+Trace/BPT trap
+
+This is a related issue to the previous problem, make sure you have installed freetype and libtiff from source for your computer's architecture
