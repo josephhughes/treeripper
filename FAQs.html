@@ -26,7 +26,7 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h2>I get an error "dyld: Library not loaded: /usr/local/lib/libMagick++.4.dylib" on MacOS X</h2>
+        <h3>I get an error "dyld: Library not loaded: /usr/local/lib/libMagick++.4.dylib" on MacOS X</h3>
 <p>        
 The problem lies in the architecture:i386 versus x86_64 and the delegate libraries for ImageMagick? need to have the right architecture.
 </p>
@@ -34,7 +34,7 @@ The problem lies in the architecture:i386 versus x86_64 and the delegate librari
 This is a problem related to the different architectures under which libMagick++ and treeripper have been compiled. You need to compile libtiff, freetype, libpng, jpeg, zlib from source. You can find most of these, here: http://www.imagemagick.org/download/delegates/ Then compile ImageMagick? from source on you particular OS and then recompile TreeRipper and this should solve the problem.
 </p>
 <p>
-<h2>I get an "image not found" error</h2>
+<h3>I get an "image not found" error</h3>
 </p>
 dyld: Library not loaded: /opt/local/lib/libfreetype.6.dylib Referenced from: /Volumes/Data/TreeRipper1?_1/src/./treeripper Reason: image not found Trace/BPT trap
 </p>
