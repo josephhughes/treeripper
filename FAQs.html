@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Treeripper : Automatically exported from code.google.com/p/treeripper">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Treeripper</title>
+  </head>
+
+  <body>
+   <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/josephhughes/treeripper">View on GitHub</a>
+
+          <h1 id="project_title">Treeripper</h1>
+          <h2 id="project_tagline">FAQs</h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>I get an error "dyld: Library not loaded: /usr/local/lib/libMagick++.4.dylib" on MacOS X</h2>
+<p>        
+The problem lies in the architecture:i386 versus x86_64 and the delegate libraries for ImageMagick? need to have the right architecture.
+</p>
+<p>
+This is a problem related to the different architectures under which libMagick++ and treeripper have been compiled. You need to compile libtiff, freetype, libpng, jpeg, zlib from source. You can find most of these, here: http://www.imagemagick.org/download/delegates/ Then compile ImageMagick? from source on you particular OS and then recompile TreeRipper and this should solve the problem.
+</p>
+<p>
+<h2>I get an "image not found" error</h2>
+</p>
+dyld: Library not loaded: /opt/local/lib/libfreetype.6.dylib Referenced from: /Volumes/Data/TreeRipper1?_1/src/./treeripper Reason: image not found Trace/BPT trap
+</p>
+<p>
+This is a related issue to the previous problem, make sure you have installed freetype and libtiff from source for your computer's architecture
+</p>
+
+  </body>
+</html>
