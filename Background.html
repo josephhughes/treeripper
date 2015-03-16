@@ -55,7 +55,7 @@
    <!-- Here's all it takes to make this navigation bar. -->
    <ul id="nav">
       <li><a href="index.html">About</a></li>
-      <li><a href="Backgound.html">Details</a></li>
+      <li><a href="Background.html">Details</a></li>
       <li><a href="FAQs.html">FAQs</a></li>
       <li><a href="News.html">News</a></li>
       <li><a href="ReleaseNotes.html">Release Notes</a></li>
@@ -68,6 +68,34 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
 TreeRipper is a command line c++ program for the fully-automated recognition of multifurcating phylogenetic trees.
+
+<h3>Installation</h3>
+
+<p>TreeRipper has a number of dependencies. First you will need to install the Magick++ library. 
+Magick++ is included as part of ImageMagick source releases and may be retrieved here:
+http://www.imagemagick.org/script/download.php
+It is recommended to install ImageMagick for MacosX using Macport as it installs all the 
+delgate libraries.</p>
+
+<p>Secondly, you will need tesseract-ocr which can be found here:
+http://code.google.com/p/tesseract-ocr/
+</p>
+<p>
+On Mac OS X, tesseract depends on libpng which itself needs zlib to compile. You will find them here:
+http://www.libpng.org/pub/png/libpng.html
+http://www.zlib.net/
+</p>
+<p>
+Finally, to compile TreeRipper:
+<pre><code>cd src</pre></code>
+<pre><code>make</pre></code>
+<p>
+<p>
+To use TreeRipper:
+<pre><code>treeripper inputimage.jpg outputtree.nex</pre></code>
+</p>
+
+On Windows, matters are made slightly easier as Windows executables exist for tesseract. 
 
 <h3>Prerequisites</h3>
 The current version of TreeRipper opens tree-image files in the formats PNG, JPG/JPEG, GIF, TIFF or PDF.
