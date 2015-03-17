@@ -21,3 +21,7 @@ To use TreeRipper:
 treeripper inputimage.jpg outputtree.nex
 
 On Windows, matters are made slightly easier as Windows executables exist for tesseract. 
+
+
+Further information about the program can be found here:
+http://josephhughes.github.io/treeripper
